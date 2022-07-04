@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta app-id="a123123" />
+    <title>前端监控平台</title>
+  </head>
+
+  <body page-id="b123123">
+    <button>显示</button>
+    <div style="background-color: green; height: 1000px">demo1</div>
+    <div
+      class="demo2"
+      style="background-color: red; height: 100px"
+      appear
+      module_id="c123123"
+    >
+      demo2
+    </div>
+    <script>
+      document
+        .getElementsByTagName('button')[0]
+        .addEventListener('click', () => {
+          const div = document.createElement('div');
+          div.innerHTML = '前端监控系统';
+          div.style = 'background: yellow;';
+          div.className = 'new-dom';
+          div.setAttribute('appear', '');
+          document.body.insertBefore(div, document.body.firstChild);
+          window.FycMonitor.collectAppear();
+        });
+    </script>
+    <script type="text/javascript">
+      document
+        .getElementsByClassName('demo2')[0]
+        .addEventListener('onAppear', (e) => {
+          window.FycMonitor.sendExp({}, e);
+        });
+      document
+        .getElementsByClassName('demo2')[0]
+        .addEventListener('onDisappear', () => {
+          console.log('onDisappear');
+        });
+
+      window.addEventListener('load', () => {
+        const monitor = window.FycMonitor;
+        monitor.registerBeforeCreateParams(() => {
+          console.log('参数创建前。。。。');
+        });
+        monitor.registerBeforeUpload((data) => {
+          console.log('上传日志前');
+          data = `${data}&custom=123`;
+          return data;
+        });
+        monitor.registerAfterUpload((url, uploadData) => {
+          console.log('上传日志后：', url, uploadData);
+        });
+        monitor.registerOnError((e) => {
+          console.log(e.message);
+        });
+        monitor.sendPV();
+      });
+
+    </script>
+  </body>
+</html>
